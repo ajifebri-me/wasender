@@ -28,7 +28,7 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const app = require("express")()
-// enable files upload
+
 app.use(fileUpload({
     createParentPath: true
 }));
@@ -54,21 +54,16 @@ app.get("/", (req, res) => {
     root: __dirname,
   });
 });
-//fungsi suara capital 
-function capital(textSound){
-    const arr = textSound.split(" ");
-    for (var i = 0; i < arr.length; i++) {
-        arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
-    }
-    const str = arr.join(" ");
-    return str;
-}
+
 const store = makeInMemoryStore({ logger: pino().child({ level: "silent", stream: "store" }) });
 
 let sock;
 let qr;
 let soket;
 
+/** 
+ * Start Connect To WA
+*/
 async function connectToWhatsApp() {
 	const { state, saveCreds } = await useMultiFileAuthState('baileys_auth_info')
 	let { version, isLatest } = await fetchLatestBaileysVersion();
@@ -128,30 +123,26 @@ async function connectToWhatsApp() {
     });
 	sock.ev.on("creds.update", saveCreds);
 	sock.ev.on("messages.upsert", async ({ messages, type }) => {
-        //console.log(messages);
         if(type === "notify"){
             if(!messages[0].key.fromMe) {
-                //tentukan jenis pesan berbentuk text                
                 const pesan = messages[0].message.conversation;
-				
-				//nowa dari pengirim pesan sebagai id
                 const noWa = messages[0].key.remoteJid;
-
                 await sock.readMessages([messages[0].key]);
-
-                //kecilkan semua pesan yang masuk lowercase 
                 const pesanMasuk = pesan.toLowerCase();
 				
                 if(!messages[0].key.fromMe && pesanMasuk === "ping"){
                     await sock.sendMessage(noWa, {text: "Pong"},{quoted: messages[0] });
                 }else{
-                    await sock.sendMessage(noWa, {text: "Saya adalah Bot!"},{quoted: messages[0] });
+                    await sock.sendMessage(noWa, {text: "Terimakasih Sudah Menghubungi, mohon bersabar untuk mendapatkan balasan selanjutnya. Saya adalah Bot!"},{quoted: messages[0] });
                 }
 			}		
 		}		
     });
 }
 
+/**
+ * Start Socket
+ */
 io.on("connection", async (socket) => {
     soket = socket;
 
@@ -162,37 +153,44 @@ io.on("connection", async (socket) => {
     }
 });
 
-// functions
+/**
+ * Function check connection WA account
+ */
 const isConnected = () => {
     return (sock.user)
 };
 
+/**
+ * Function emit message for update response to view
+ */
 const updateQR = (data) => {
     switch (data) {
         case "qr":
             qrcode.toDataURL(qr, (err, url) => {
                 soket?.emit("qr", url);
-                soket?.emit("log", "QR Code received, please scan!");
+                soket?.emit("log", "QR Code received, please scan");
             });
             break;
         case "connected":
             soket?.emit("qrstatus", "./assets/check.svg");
-            soket?.emit("log", "WhatsApp terhubung!");
+            soket?.emit("log", "WhatsApp terhubung");
             break;
         case "qrscanned":
             soket?.emit("qrstatus", "./assets/check.svg");
-            soket?.emit("log", "QR Code Telah discan!");
+            soket?.emit("log", "QR Code berhasil discan");
             break;
         case "loading":
             soket?.emit("qrstatus", "./assets/loader.gif");
-            soket?.emit("log", "Registering QR Code , please wait!");
+            soket?.emit("log", "Registering QR Code , please wait");
             break;
         default:
             break;
     }
 };
 
-// send text message to wa user
+/**
+ * Send Message
+ */
 app.post("/send-message", async (req, res) =>{
     const pesankirim = req.body.message;
     const number = req.body.number;
@@ -203,7 +201,7 @@ app.post("/send-message", async (req, res) =>{
         if(!number) {
             res.status(500).json({
                status: false,
-               response: 'Nomor WA belum tidak disertakan!'
+               response: 'Nomor WA tidak boleh kosong'
            });
        }else{
            numberWA = '62' + number.substring(1) + "@s.whatsapp.net"; 
@@ -243,8 +241,12 @@ app.post("/send-message", async (req, res) =>{
     
 });
 
+
+/**
+ * Start Function To Connect WA
+ */
 connectToWhatsApp()
-.catch (err => console.log("unexpected error: " + err) ) // catch any errors
+.catch (err => console.log("unexpected error: " + err) )
 server.listen(port, () => {
-  console.log("Server Berjalan pada Port : " + port);
+  console.log("server running on port : " + port);
 });
