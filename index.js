@@ -205,7 +205,7 @@ app.post("/send-message", async (req, res) =>{
            });
        }else{
            numberWA = '62' + number.substring(1) + "@s.whatsapp.net"; 
-
+          
            if (isConnected) {
                const exists = await sock.onWhatsApp(numberWA);
                if (exists?.jid || (exists && exists[0]?.jid)) {
