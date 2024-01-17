@@ -147,7 +147,7 @@ io.on("connection", async (socket) => {
     soket = socket;
     socket.emit('log','starting socket')
     socket.on('error', (error) => {
-        console.error('Socket error:', error);
+        fs.appendFileSync('log.txt', error);
     });
     if (isConnected) {
         updateQR("connected");
