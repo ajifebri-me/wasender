@@ -102,6 +102,8 @@ body{
 			const qrcode = document.getElementById("qrcode");
 			const socket = io();
 
+      console.log("test log");
+
 			socket.on("qr", src => {
 				qrcode.setAttribute("src", src);
 				qrcode.setAttribute("alt", "qrcode");
