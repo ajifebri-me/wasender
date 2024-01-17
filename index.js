@@ -38,7 +38,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 9000;
 const qrcode = require("qrcode");
 
 app.use("/assets", express.static(__dirname + "/client/assets"));
@@ -145,7 +145,7 @@ async function connectToWhatsApp() {
  */
 io.on("connection", async (socket) => {
     soket = socket;
-
+    socket.emit('log','starting socket')
     if (isConnected) {
         updateQR("connected");
     } else if (qr) {
