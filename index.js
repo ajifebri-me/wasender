@@ -23,7 +23,15 @@ let connectionWA = 'loading'
 app.use("/assets", express.static(__dirname + "/client/assets"));
 
 const client = new Client({
-    authStrategy: new LocalAuth()
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--unhandled-rejections=strict"
+        ]
+    },
 });
 
 client.on('ready', () => {
