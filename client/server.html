@@ -132,7 +132,7 @@
       });
   }
 
-  // socket.emit('load')
+  socket.emit('load')
 
   socket.on("qr", src => {
     qrcode.setAttribute("src", src);
