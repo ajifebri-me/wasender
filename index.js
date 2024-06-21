@@ -28,6 +28,11 @@ const client = new Client({
     remotePath:
         "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
     },
+    webVersionCache: 
+    {
+      remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2402.5-beta.html',
+      type: 'remote'
+    }
 });
 
 client.on('ready', () => {
