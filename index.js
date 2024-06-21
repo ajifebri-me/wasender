@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const app = require("express")()
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
-const port = process.env.PORT || 8002;
+const port = process.env.PORT || 8004;
 
 app.use(fileUpload({
     createParentPath: true
