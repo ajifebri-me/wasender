@@ -39,8 +39,6 @@ const client = new Client({
     },
 });
 
-client.initialize();
-
 client.on('ready', () => {
     connectionWA = 'connected';
     soket?.emit("qrstatus", {status: 'connected', url:"./assets/checked.json"});
@@ -70,6 +68,8 @@ client.on('message_create', message => {
         client.sendMessage(message.from, 'Hallo Ada Apa?, Saya Bot');
 	}
 });
+
+client.initialize();
 
 io.on("connection", async (socket) => {
     soket = socket;
