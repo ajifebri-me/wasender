@@ -116,7 +116,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
 <script>
   const qrcode = document.getElementById("qrcode");
-  const socket = io();
+  const socket = io({
+  		transports: ['polling']
+	});
   var animation;
 
   function loadAnimation(path) {
