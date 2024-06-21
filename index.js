@@ -28,7 +28,18 @@ const client = new Client({
     remotePath:
         "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
     },
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--unhandled-rejections=strict"
+        ]
+    },
 });
+
+client.initialize();
 
 client.on('ready', () => {
     connectionWA = 'connected';
@@ -59,8 +70,6 @@ client.on('message_create', message => {
         client.sendMessage(message.from, 'Hallo Ada Apa?, Saya Bot');
 	}
 });
-
-client.initialize();
 
 io.on("connection", async (socket) => {
     soket = socket;
